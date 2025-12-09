@@ -1,0 +1,42 @@
+# Helm
+*.tgz
+chart/
+*.tar.gz
+chart.lock
+charts/
+
+# Values with secrets (NEVER commit!)
+values-*.yaml
+!values.yaml
+!values-prod-example.yaml
+*.secrets.yaml
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# OS
+thumbls.db
+.DS_Store
+
+# Build artifacts
+node_modules/
+dist/
+.git
+
+# Logs
+*.log
+logs/
+
+# Local development
+tmp/
+temp/
