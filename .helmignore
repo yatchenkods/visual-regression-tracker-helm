@@ -1,0 +1,26 @@
+# Patterns to ignore when building packages.
+# This supports shell glob patterns, relative paths, and negated patterns
+# as supported by GitIgnore. See
+# https://git-scm.com/docs/gitignore for more details.
+the
+.DS_Store
+thumbls.db
+*.swp
+*.swo
+*~
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+*.swp
+*.iml
+.env
+.env.local
+.env.*.local
+node_modules/
+dist/
+.git
+.gitignore
+.gitattributes
+.kube
+README.md
