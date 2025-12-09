@@ -1,0 +1,24 @@
+{{- if .Values.ui.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vrt.fullname" . }}-ui
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "vrt.labels" . | nindent 4 }}
+    app: vrt-ui
+  {{- with .Values.ui.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.ui.service.type }}
+  ports:
+  - port: {{ .Values.ui.service.port }}
+    targetPort: {{ .Values.ui.port }}
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "vrt.selectorLabels" . | nindent 4 }}
+    app: vrt-ui
+{{- end }}
