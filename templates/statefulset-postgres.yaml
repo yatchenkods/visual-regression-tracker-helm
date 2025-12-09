@@ -1,0 +1,81 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "vrt.fullname" . }}-postgres
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "vrt.labels" . | nindent 4 }}
+    app: postgres
+spec:
+  serviceName: {{ include "vrt.fullname" . }}-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "vrt.selectorLabels" . | nindent 6 }}
+      app: postgres
+  template:
+    metadata:
+      labels:
+        {{- include "vrt.selectorLabels" . | nindent 8 }}
+        app: postgres
+    spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vrt.serviceAccountName" . }}
+      containers:
+      - name: postgres
+        image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+        imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+        ports:
+        - name: postgres
+          containerPort: {{ .Values.postgres.port }}
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "vrt.fullname" . }}-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "vrt.fullname" . }}-config
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "vrt.fullname" . }}-secret
+              key: POSTGRES_PASSWORD
+        {{- if .Values.postgres.healthCheck.enabled }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+          initialDelaySeconds: {{ .Values.postgres.healthCheck.initialDelaySeconds }}
+          periodSeconds: {{ .Values.postgres.healthCheck.periodSeconds }}
+          timeoutSeconds: {{ .Values.postgres.healthCheck.timeoutSeconds }}
+          failureThreshold: {{ .Values.postgres.healthCheck.failureThreshold }}
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - pg_isready -U $POSTGRES_USER -d $POSTGRES_DB
+          initialDelaySeconds: 5
+          periodSeconds: {{ .Values.postgres.healthCheck.periodSeconds }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.postgres.resources | nindent 12 }}
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+          subPath: postgres
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: {{ include "vrt.fullname" . }}-postgres-pvc
+{{- end }}
