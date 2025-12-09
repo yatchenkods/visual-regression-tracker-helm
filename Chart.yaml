@@ -1,0 +1,18 @@
+apiVersion: v2
+name: visual-regression-tracker
+description: A Helm chart for Visual Regression Tracker - an open source tool for tracking visual regression testing
+type: application
+version: 1.0.0
+appVersion: "5.0.8"
+keywords:
+  - vrt
+  - visual-regression
+  - testing
+  - qa
+  - ci-cd
+home: https://github.com/Visual-Regression-Tracker/Visual-Regression-Tracker
+sources:
+  - https://github.com/Visual-Regression-Tracker/Visual-Regression-Tracker
+maintainers:
+  - name: DevOps Team
+icon: https://raw.githubusercontent.com/Visual-Regression-Tracker/Visual-Regression-Tracker/master/public/logo.svg
