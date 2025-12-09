@@ -1,0 +1,23 @@
+{{- if .Values.storage.imageUploads.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "vrt.fullname" . }}-images-pvc
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "vrt.labels" . | nindent 4 }}
+    app: vrt-storage
+  {{- with .Values.storage.imageUploads.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - {{ .Values.storage.imageUploads.accessMode }}
+  {{- if .Values.storage.imageUploads.storageClass }}
+  storageClassName: {{ .Values.storage.imageUploads.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.imageUploads.size }}
+{{- end }}
